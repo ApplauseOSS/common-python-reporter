@@ -1,0 +1,29 @@
+[build-system]
+requires = [
+    "setuptools >= 71.1.0"
+]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src/"]
+include = ["applause.common_python_reporter"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[project]
+name = "applause-common-reporter"
+version = "1.0.0"
+description = "A common reporter interface for integrating Applause Services with various testrunners"
+readme = "README.md"
+requires-python = ">=3.8"
+
+[project.urls]
+Homepage = "https://github.com/ApplauseOSS/common-python-reporter"
+Issues = "https://github.com/ApplauseOSS/common-python-reporter/issues"
+
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+]
+pythonpath = "src/applause/common_python_reporter"
