@@ -203,7 +203,7 @@ class AutoApi:
         headers = {"X-Api-Key": self.config.api_key}
         requests.post(
             f"{self.config.auto_api_base_url}api/v2.0/sdk-heartbeat",
-            json={"testRunId", test_run_id},
+            json={"testRunId": test_run_id},
             headers=headers,
         )
 
@@ -270,10 +270,10 @@ class AutoApi:
         requests.post(
             f"{self.config.auto_api_base_url}api/v1.0/test-result/{result_id}/upload",
             headers=headers,
-            files={file: file},
+            files={"file": (asset_name, file, "application/octet-stream")},
             data={
                 "providerSessionGuid": provider_session_guid,
-                "assetType": asset_type,
+                "assetType": asset_type.value,
                 "assetName": asset_name,
             },
         )

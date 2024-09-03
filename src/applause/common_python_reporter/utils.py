@@ -28,8 +28,8 @@ class TestCaseNameMatches(BaseModel):
     __test__ = False
 
     test_case_name: str
-    test_rail_test_case_id: Optional[int]
-    applause_test_case_id: Optional[int]
+    test_rail_test_case_id: Optional[int] = None
+    applause_test_case_id: Optional[int] = None
 
 
 def remove_prefix(text: str, prefix: str) -> str:

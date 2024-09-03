@@ -8,7 +8,6 @@ brew install pipenv   # installs pipenv
 export PIPENV_VENV_IN_PROJECT=1
 pipenv install        # installs python dependencies into pipenv
 pipenv install --dev  # installs python dev-dependencies into pipenv
-pipenv run playwright install  # installs playwright browser binaries
 ```
 
 Add this to your .bashrc/.zshrc to stick python virtualenv to project directory.

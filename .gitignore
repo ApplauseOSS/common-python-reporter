@@ -100,15 +100,6 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-# Our DSL tool creates these
-kube_deployment-*.yaml
-kube_namespace-*.yaml
-kube_secret-*.yaml
-kube_service-*.yaml
-marathon-*.json
-metronome-*.json
-kongfig-*.json
-
 ### IntelliJ IDEA ###
 .idea
 *.iws
@@ -119,8 +110,8 @@ kongfig-*.json
 .vscode/
 
 ### app specific ###
-# local db (pre-UI, or run as CLI)
-app/chat/*.db
+provider_session_links.txt
+
 
 ### mac stuff 
 .DS_Store
