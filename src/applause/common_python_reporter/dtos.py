@@ -93,6 +93,7 @@ class TestResultStatus(str, Enum):
     """
 
     __test__ = False
+    model_config = ConfigDict(use_enum_values=True)
     NOT_RUN = "NOT_RUN"
     IN_PROGRESS = "IN_PROGRESS"
     PASSED = "PASSED"
@@ -116,8 +117,8 @@ class TestResultProviderInfo(BaseModel):
     __test__ = False
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
     test_result_id: int
-    provider_url: str
-    provider_session_id: str
+    provider_url: Optional[str] = None
+    provider_session_id: Optional[str] = None
 
 
 class TestRailOptions(BaseModel):
@@ -184,6 +185,7 @@ class SubmitTestCaseResultDto(BaseModel):
 
     """
 
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
     test_result_id: int
     status: TestResultStatus
     provider_session_guids: List[str]
@@ -211,6 +213,8 @@ class AssetType(str, Enum):
         PAGE_SOURCE: A page source asset
         UNKNOWN: An unknown asset
     """
+
+    model_config = ConfigDict(use_enum_values=True)
 
     SCREENSHOT = "SCREENSHOT"
     FAILURE_SCREENSHOT = "FAILURE_SCREENSHOT"

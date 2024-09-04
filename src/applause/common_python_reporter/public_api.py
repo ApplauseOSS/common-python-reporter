@@ -50,12 +50,12 @@ class SessionDetailsValue(BaseModel):
     """
 
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
-    deviceName: Optional[str]
-    orientation: Optional[str]
-    platformName: Optional[str]
-    platformVersion: Optional[str]
-    browserName: Optional[str]
-    browserVersion: Optional[str]
+    deviceName: Optional[str] = None
+    orientation: Optional[str] = None
+    platformName: Optional[str] = None
+    platformVersion: Optional[str] = None
+    browserName: Optional[str] = None
+    browserVersion: Optional[str] = None
 
 
 class SessionDetails(BaseModel):
@@ -89,10 +89,10 @@ class TestRunAutoResultDto(BaseModel):
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
     testCycleId: int
     status: TestRunAutoResultStatus
-    failureReason: Optional[str]
-    sessionDetailsJson: Optional[SessionDetails]
-    startTime: Optional[str]
-    endTime: Optional[str]
+    failureReason: Optional[str] = None
+    sessionDetailsJson: Optional[SessionDetails] = None
+    startTime: Optional[str] = None
+    endTime: Optional[str] = None
 
 
 class PublicApi:

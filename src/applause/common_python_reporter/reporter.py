@@ -23,8 +23,8 @@ from .dtos import (
     AssetType,
 )
 from .heartbeat import HeartbeatService
-import json
 from .utils import parse_test_case_names
+import json
 from typing import List, Optional
 
 
@@ -56,7 +56,12 @@ class RunReporter:
         self.result_map = {}
 
     def start_test_case(
-        self, id: str, test_case_name: str, provider_session_ids: Optional[List[str]] = None, testrail_test_case_id: Optional[str] = None, itw_test_case_id: Optional[str] = None
+        self,
+        id: str,
+        test_case_name: str,
+        provider_session_ids: Optional[List[str]] = None,
+        test_rail_test_case_id: Optional[str] = None,
+        applause_test_case_id: Optional[str] = None,
     ) -> CreateTestCaseResultResponseDto:
         """Start a test case.
 
@@ -65,16 +70,16 @@ class RunReporter:
             id (str): The id of the test case
             test_case_name (str): The name of the test case
             provider_session_ids (Optional[List[str]], optional): The list of provider session ids. Defaults to None.
-            testrail_test_case_id (Optional[str], optional): The test rail case id. Defaults to None.
-            itw_test_case_id (Optional[str], optional): The itw test case id. Defaults to None.
+            test_rail_test_case_id (Optional[str], optional): The test rail case id. Defaults to None.
+            applause_test_case_id (Optional[str], optional): The itw test case id. Defaults to None.
 
         """
         parsed_test_case = parse_test_case_names(test_case_name)
         body = CreateTestCaseResultDto(
             test_case_name=parsed_test_case.test_case_name,
             test_run_id=self.test_run_id,
-            itw_test_case_id=itw_test_case_id if itw_test_case_id is not None else parsed_test_case.itw_test_case_id,
-            test_case_id=testrail_test_case_id if testrail_test_case_id is not None else parsed_test_case.test_case_id,
+            itw_test_case_id=applause_test_case_id if applause_test_case_id is not None else parsed_test_case.applause_test_case_id,
+            test_case_id=test_rail_test_case_id if test_rail_test_case_id is not None else parsed_test_case.test_rail_test_case_id,
             provider_session_ids=provider_session_ids if provider_session_ids is not None else [],
         )
         result = self.auto_api.start_test_case(params=body)
@@ -157,7 +162,7 @@ class RunReporter:
             for link in links:
                 print(link)
         with open("provider_session_links.txt", "w") as f:
-            f.write(json.dumps(links))
+            f.write(json.dumps([link.model_dump() for link in links]))
 
 
 class RunInitializer:
@@ -180,7 +185,7 @@ class RunInitializer:
         """
         self.auto_api = auto_api
 
-    def start_run(self, tests: Optional[List[str]]) -> RunReporter:
+    def start_run(self, tests: Optional[List[str]] = None) -> RunReporter:
         """Start a test run and returns a RunReporter object.
 
         Args:
@@ -188,6 +193,7 @@ class RunInitializer:
         tests (Optional[List[str]], optional): The list of test case names to run. Defaults to None.
 
         """
+        tests = tests if tests is not None else []
         response = self.auto_api.start_test_run(params=TestRunCreateDto(tests=[parse_test_case_names(test).test_case_name for test in tests]))
         heartbeat_service = HeartbeatService(self.auto_api, response.run_id)
         heartbeat_service.start()
@@ -213,7 +219,7 @@ class ApplauseReporter:
         self.initializer = RunInitializer(self.auto_api)
         self.reporter = None
 
-    def runner_start(self, tests: Optional[List[str]]) -> int:
+    def runner_start(self, tests: Optional[List[str]] = None) -> int:
         """Initialize a test run.
 
         Args:
@@ -227,7 +233,12 @@ class ApplauseReporter:
         return self.reporter.test_run_id
 
     def start_test_case(
-        self, id: str, test_case_name: str, provider_session_ids: Optional[List[str]] = None, testrail_test_case_id: Optional[str] = None, itw_test_case_id: Optional[str] = None
+        self,
+        id: str,
+        test_case_name: str,
+        provider_session_ids: Optional[List[str]] = None,
+        test_rail_test_case_id: Optional[str] = None,
+        applause_test_case_id: Optional[str] = None,
     ) -> CreateTestCaseResultResponseDto:
         """Start a test case.
 
@@ -236,8 +247,8 @@ class ApplauseReporter:
             id (str): The id of the test case
             test_case_name (str): The name of the test case
             provider_session_ids (Optional[List[str]], optional): The list of provider session ids. Defaults to None.
-            testrail_test_case_id (Optional[str], optional): The test rail case id. Defaults to None.
-            itw_test_case_id (Optional[str], optional): The itw test case id. Defaults to None.
+            test_rail_test_case_id (Optional[str], optional): The test rail case id. Defaults to None.
+            applause_test_case_id (Optional[str], optional): The itw test case id. Defaults to None.
 
         Raises:
         ------
@@ -247,7 +258,7 @@ class ApplauseReporter:
         if self.reporter is None:
             raise ValueError("Cannot start a test case for a run that was never initialized")
         return self.reporter.start_test_case(
-            id, test_case_name, provider_session_ids=provider_session_ids, testrail_test_case_id=testrail_test_case_id, itw_test_case_id=itw_test_case_id
+            id, test_case_name, provider_session_ids=provider_session_ids, test_rail_test_case_id=test_rail_test_case_id, applause_test_case_id=applause_test_case_id
         )
 
     def submit_test_case_result(

@@ -26,4 +26,4 @@ Issues = "https://github.com/ApplauseOSS/common-python-reporter/issues"
 addopts = [
     "--import-mode=importlib",
 ]
-pythonpath = "src/applause/common_python_reporter"
+pythonpath = "src"
