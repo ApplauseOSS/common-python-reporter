@@ -4,25 +4,22 @@ Shared library for implementing test result reporting to the Applause services.
 ## Prerequisites
 
 ```bash
-brew install pipenv   # installs pipenv
-export PIPENV_VENV_IN_PROJECT=1
-pipenv install        # installs python dependencies into pipenv
-pipenv install --dev  # installs python dev-dependencies into pipenv
+pip install poetry
+poetry install        # installs python dependencies into poetry
+poetry install --dev  # installs python dev-dependencies into poetry
 ```
 
-Add this to your .bashrc/.zshrc to stick python virtualenv to project directory.
+Optionally, run this command to stick python virtualenv to project directory.
+poetry config virtualenvs.in-project true
 
-```export PIPENV_VENV_IN_PROJECT=1```
 
 ## Building the Project
 
 We use tox to automate our build pipeline. Running the default tox configuration will install dependencies, format and lint the project, run the unit test and run the build. This will verify the project builds correctly for python 3.8, 3.9, 3.10, and 3.11. 
 
 ```bash
-pipenv run tox
+poetry run tox
 ```
-
-Currently, our tox configuration relies on the existence of the requirements.txt files. If this file is not up to date with the Pipenv file, we could run into problems with the build. The tox-pipenv currently does not support Tox 4.0+. Once the plugin has been fixed under this issue: https://github.com/tox-dev/tox-pipenv/issues/73, we can resolve this limitation.
 
 ### Executing Unit Tests
 
@@ -30,22 +27,22 @@ The unit tests can be executed through tox `tox run -e test`
 
 ### Intellij setup
 
-https://www.jetbrains.com/help/idea/pipenv.html
+https://www.jetbrains.com/help/idea/poetry.html
 
 ### Helpful commands
 
 ```bash
-pipenv --py # shows python version for your venv
-pipenv --venv # shows venv directory (packages will be installed there)
+# list details of the poetry environment
+poetry env info 
 
-To activate this project's virtualenv, run the following:
-$ pipenv shell
+# To activate this project's virtualenv, run the following:
+poetry shell
 
-To exit the virtualenv shell:
-$ exit
+# To exit the virtualenv shell:
+exit
 
-To install packages into this virtualenv:
-$ pipenv install YOUR_PACKAGE
+# To install packages into this virtualenv:
+poetry add YOUR_PACKAGE
 
 
 ```

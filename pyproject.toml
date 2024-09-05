@@ -1,26 +1,29 @@
 [build-system]
-requires = [
-    "setuptools >= 71.1.0"
-]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
-[tool.setuptools.packages.find]
-where = ["src/"]
-include = ["applause.common_python_reporter"]
-
-[tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
-
-[project]
+[tool.poetry]
 name = "applause-common-reporter"
-version = "1.0.0"
 description = "A common reporter interface for integrating Applause Services with various testrunners"
 readme = "README.md"
-requires-python = ">=3.8"
+version = "1.0.0"
+authors = ["Applause"]
+homepage = "https://github.com/ApplauseOSS/common-python-reporter"
+license = "LICENSE"
+packages = [ { include = "applause", from = "src" } ]
 
-[project.urls]
-Homepage = "https://github.com/ApplauseOSS/common-python-reporter"
-Issues = "https://github.com/ApplauseOSS/common-python-reporter/issues"
+[tool.poetry.dependencies]
+python = "^3.8.0"
+requests = "^2.32.3"
+pydantic = "^2.8.2"
+humps = "^0.2.2"
+apscheduler = "^3.10.4"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.2"
+ruff = "^0.6.3"
+setuptools = "^74.1.1"
+tox = "^4.18.0"
 
 [tool.pytest.ini_options]
 addopts = [
