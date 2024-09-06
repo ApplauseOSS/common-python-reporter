@@ -220,7 +220,7 @@ class AutoApi:
         """
         headers = {"X-Api-Key": self.config.api_key}
         response = requests.get(
-            f"{self.config.public_api_base_url}api/v1.0/email/get-address?emailPrefix={email_prefix}",
+            f"{self.config.auto_api_base_url}api/v1.0/email/get-address?emailPrefix={email_prefix}",
             headers=headers,
         )
         return EmailAddressResponse.model_validate(response.json())
@@ -238,7 +238,7 @@ class AutoApi:
         """
         headers = {"X-Api-Key": self.config.api_key}
         response = requests.post(
-            f"{self.config.public_api_base_url}api/v1.0/email/download-email",
+            f"{self.config.auto_api_base_url}api/v1.0/email/download-email",
             json=request.model_dump(by_alias=True),
             headers=headers,
         )
