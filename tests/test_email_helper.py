@@ -14,7 +14,7 @@ class TestEmailHelper:
             product_id=123
         ))
         email_helper = EmailHelper(auto_api_mock)
-        responses.add('GET', 'https://prod-auto-api.cloud.applause.com:443/api/v1.0/email/get-address?emailPrefix=test', json={'email_address': 'test123@test.com'})
+        responses.add('GET', 'https://prod-auto-api.cloud.applause.com:443/api/v1.0/email/get-address?prefix=test', json={'email_address': 'test123@test.com'})
         with open('tests/data/test_email.eml') as f:
             email = f.read()
             responses.add('POST', 'https://prod-auto-api.cloud.applause.com:443/api/v1.0/email/download-email', body=email)
