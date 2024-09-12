@@ -220,7 +220,7 @@ class AutoApi:
         """
         headers = {"X-Api-Key": self.config.api_key}
         response = requests.get(
-            f"{self.config.auto_api_base_url}api/v1.0/email/get-address?emailPrefix={email_prefix}",
+            f"{self.config.auto_api_base_url}api/v1.0/email/get-address?prefix={email_prefix}",
             headers=headers,
         )
         return EmailAddressResponse.model_validate(response.json())
