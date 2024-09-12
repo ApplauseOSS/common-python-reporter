@@ -119,9 +119,8 @@ class RunReporter:
             status=status,
             provider_session_guids=provider_session_guids if provider_session_guids is not None else [],
             failure_reason=failure_reason,
-            itw_test_case_id=applause_test_case_id,
+            itw_case_id=applause_test_case_id,
             test_rail_case_id=test_rail_case_id,
-            test_case_id=failure_reason,
         )
         self.auto_api.submit_test_case_result(params=body)
 
