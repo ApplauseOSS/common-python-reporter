@@ -15,7 +15,7 @@ class TestApplauseReporter:
         assert create_run_call.call_count == 0
         run_id = reporter.runner_start(tests=["test1", "test2"])
         assert create_run_call.call_count == 1
-        assert create_run_call.calls[0].request.body == b'{"tests": ["test1", "test2"], "productId": 123, "sdkVersion": "python:1.0.0"}', "Create run request Body should be formatted properly"
+        assert create_run_call.calls[0].request.body == b'{"tests": ["test1", "test2"], "productId": 123, "sdkVersion": "python:1.0.0", "itwTestCycleId": null}', "Create run request Body should be formatted properly"
         assert run_id == 123
 
     @responses.activate
@@ -67,7 +67,7 @@ class TestApplauseReporter:
         assert create_run_call.call_count == 0
         reporter.runner_start(tests=["test1", "test2"])
         assert create_run_call.call_count == 1
-        assert create_run_call.calls[0].request.body == b'{"tests": ["test1", "test2"], "productId": 123, "sdkVersion": "python:1.0.0"}', "Create run request Body should be formatted properly"
+        assert create_run_call.calls[0].request.body == b'{"tests": ["test1", "test2"], "productId": 123, "sdkVersion": "python:1.0.0", "itwTestCycleId": null}', "Create run request Body should be formatted properly"
         assert end_run_call.call_count == 0
         assert provider_info_call.call_count == 0
         reporter.runner_end()
