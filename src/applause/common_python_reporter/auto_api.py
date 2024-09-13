@@ -83,6 +83,7 @@ class AutoApi:
         request_params = params.model_dump(by_alias=True)
         request_params["productId"] = self.config.product_id
         request_params["sdkVersion"] = f"python:{self.api_version}"
+        request_params["itwTestCycleId"] = self.config.applause_test_cycle_id
 
         # If testRailOptions is not None, add the testRailReportingEnabled flag and the additional testRailOptions
         if self.config.test_rail_options is not None:
