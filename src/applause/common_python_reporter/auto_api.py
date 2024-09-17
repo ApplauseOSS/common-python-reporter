@@ -31,6 +31,7 @@ from .dtos import (
     EmailFetchRequest,
     AssetType,
 )
+from .errors import ApplauseClientError
 from .config import ApplauseConfig
 from typing import List
 from email import message_from_bytes
@@ -94,14 +95,17 @@ class AutoApi:
             request_params["testRailPlanName"] = self.config.test_rail_options.plan_name
             request_params["testRailRunName"] = self.config.test_rail_options.run_name
             request_params["overrideTestRailRunNameUniqueness"] = self.config.test_rail_options.override_test_rail_run_uniqueness
-
-        # Post the request to Auto API
-        response = requests.post(
-            f"{self.config.auto_api_base_url}api/v1.0/test-run/create",
-            json=request_params,
-            headers=headers,
-        )
-        return TestRunCreateResponseDto.model_validate(response.json())
+        try:
+            # Post the request to Auto API
+            response = requests.post(
+                f"{self.config.auto_api_base_url}api/v1.0/test-run/create",
+                json=request_params,
+                headers=headers,
+            )
+            response.raise_for_status()  # Raise an error for bad responses
+            return TestRunCreateResponseDto.model_validate(response.json())
+        except requests.exceptions.HTTPError as e:
+            raise ApplauseClientError(e.response) from e
 
     def end_test_run(self, test_run_id: int) -> None:
         """End a test run with the provided test run ID.
@@ -115,10 +119,14 @@ class AutoApi:
 
         """
         headers = {"X-Api-Key": self.config.api_key}
-        requests.delete(
-            f"{self.config.auto_api_base_url}api/v1.0/test-run/{test_run_id}?endingStatus=COMPLETE",
-            headers=headers,
-        )
+        try:
+            response = requests.delete(
+                f"{self.config.auto_api_base_url}api/v1.0/test-run/{test_run_id}?endingStatus=COMPLETE",
+                headers=headers,
+            )
+            response.raise_for_status()  # Raise an error for bad responses
+        except requests.exceptions.HTTPError as e:
+            raise ApplauseClientError(e.response) from e
 
     def start_test_case(self, params: CreateTestCaseResultDto) -> CreateTestCaseResultResponseDto:
         """Start a test case with the provided parameters.
@@ -142,12 +150,16 @@ class AutoApi:
         """
         headers = {"X-Api-Key": self.config.api_key, "Content-Type": "application/json"}
         request_params = params.model_dump(by_alias=True)
-        response = requests.post(
-            f"{self.config.auto_api_base_url}api/v1.0/test-result/create-result",
-            json=request_params,
-            headers=headers,
-        )
-        return CreateTestCaseResultResponseDto.model_validate(response.json())
+        try:
+            response = requests.post(
+                f"{self.config.auto_api_base_url}api/v1.0/test-result/create-result",
+                json=request_params,
+                headers=headers,
+            )
+            response.raise_for_status()
+            return CreateTestCaseResultResponseDto.model_validate(response.json())
+        except requests.exceptions.HTTPError as e:
+            raise ApplauseClientError(e.response) from e
 
     def submit_test_case_result(self, params: SubmitTestCaseResultDto) -> None:
         """Submit a test case result with the provided parameters.
@@ -163,11 +175,15 @@ class AutoApi:
         """
         headers = {"X-Api-Key": self.config.api_key, "Content-Type": "application/json"}
         request_params = params.model_dump(by_alias=True)
-        requests.post(
-            f"{self.config.auto_api_base_url}api/v1.0/test-result",
-            json=request_params,
-            headers=headers,
-        )
+        try:
+            response = requests.post(
+                f"{self.config.auto_api_base_url}api/v1.0/test-result",
+                json=request_params,
+                headers=headers,
+            )
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            raise ApplauseClientError(e.response) from e
 
     def get_provider_session_links(self, result_ids: List[int]) -> List[TestResultProviderInfo]:
         """Fetch the provider session links for the provided result IDs.
@@ -182,13 +198,16 @@ class AutoApi:
 
         """
         headers = {"X-Api-Key": self.config.api_key}
-        response = requests.post(
-            f"{self.config.auto_api_base_url}api/v1.0/test-result/provider-info",
-            json=result_ids,
-            headers=headers,
-        )
-        print(response.text)
-        return [TestResultProviderInfo.model_validate(result) for result in response.json()]
+        try:
+            response = requests.post(
+                f"{self.config.auto_api_base_url}api/v1.0/test-result/provider-info",
+                json=result_ids,
+                headers=headers,
+            )
+            response.raise_for_status()
+            return [TestResultProviderInfo.model_validate(result) for result in response.json()]
+        except requests.exceptions.HTTPError as e:
+            raise ApplauseClientError(e.response) from e
 
     def send_sdk_heartbeat(self, test_run_id: int) -> None:
         """Send an SDK heartbeat for the provided test run ID.
@@ -202,11 +221,15 @@ class AutoApi:
 
         """
         headers = {"X-Api-Key": self.config.api_key}
-        requests.post(
-            f"{self.config.auto_api_base_url}api/v2.0/sdk-heartbeat",
-            json={"testRunId": test_run_id},
-            headers=headers,
-        )
+        try:
+            response = requests.post(
+                f"{self.config.auto_api_base_url}api/v2.0/sdk-heartbeat",
+                json={"testRunId": test_run_id},
+                headers=headers,
+            )
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            raise ApplauseClientError(e.response) from e
 
     def get_email_address(self, email_prefix: str) -> EmailAddressResponse:
         """Generate an email address with the provided email prefix.
@@ -220,11 +243,15 @@ class AutoApi:
 
         """
         headers = {"X-Api-Key": self.config.api_key}
-        response = requests.get(
-            f"{self.config.auto_api_base_url}api/v1.0/email/get-address?prefix={email_prefix}",
-            headers=headers,
-        )
-        return EmailAddressResponse.model_validate(response.json())
+        try:
+            response = requests.get(
+                f"{self.config.auto_api_base_url}api/v1.0/email/get-address?prefix={email_prefix}",
+                headers=headers,
+            )
+            response.raise_for_status()
+            return EmailAddressResponse.model_validate(response.json())
+        except requests.exceptions.HTTPError as e:
+            raise ApplauseClientError(e.response) from e
 
     def get_email_content(self, request: EmailFetchRequest) -> Message:
         """Fetch the email content for the provided email address.
@@ -238,12 +265,16 @@ class AutoApi:
 
         """
         headers = {"X-Api-Key": self.config.api_key}
-        response = requests.post(
-            f"{self.config.auto_api_base_url}api/v1.0/email/download-email",
-            json=request.model_dump(by_alias=True),
-            headers=headers,
-        )
-        return message_from_bytes(response.content)
+        try:
+            response = requests.post(
+                f"{self.config.auto_api_base_url}api/v1.0/email/download-email",
+                json=request.model_dump(by_alias=True),
+                headers=headers,
+            )
+            response.raise_for_status()
+            return message_from_bytes(response.content)
+        except requests.exceptions.HTTPError as e:
+            raise ApplauseClientError(e.response) from e
 
     def upload_asset(
         self,
@@ -268,13 +299,17 @@ class AutoApi:
 
         """
         headers = {"X-Api-Key": self.config.api_key}
-        requests.post(
-            f"{self.config.auto_api_base_url}api/v1.0/test-result/{result_id}/upload",
-            headers=headers,
-            files={"file": (asset_name, file, "application/octet-stream")},
-            data={
-                "providerSessionGuid": provider_session_guid,
-                "assetType": asset_type.value,
-                "assetName": asset_name,
-            },
-        )
+        try:
+            response = requests.post(
+                f"{self.config.auto_api_base_url}api/v1.0/test-result/{result_id}/upload",
+                headers=headers,
+                files={"file": (asset_name, file, "application/octet-stream")},
+                data={
+                    "providerSessionGuid": provider_session_guid,
+                    "assetType": asset_type.value,
+                    "assetName": asset_name,
+                },
+            )
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            raise ApplauseClientError(e.response) from e

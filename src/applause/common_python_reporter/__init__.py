@@ -15,7 +15,11 @@ Modules:
 - version: Version of the package.
 """
 
-from .config import ApplauseConfig
+from .auto_api import AutoApi
+from .config import ApplauseConfig, TestRailOptions
+from .email_helper import EmailHelper
+from .errors import ApplauseClientError
+from .public_api import PublicApi
 from .reporter import ApplauseReporter
 
-__all__ = [ApplauseReporter, ApplauseConfig]
+__all__ = [ApplauseReporter, ApplauseConfig, ApplauseClientError, EmailHelper, TestRailOptions, AutoApi, PublicApi]
