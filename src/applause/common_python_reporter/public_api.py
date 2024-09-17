@@ -12,6 +12,7 @@ public_api.submit_result(123, TestRunAutoResultDto(...))
 import requests
 from .config import ApplauseConfig
 from .dtos import to_camel
+from .errors import ApplauseClientError
 from enum import Enum
 from pydantic import BaseModel, ConfigDict
 from typing import Optional
@@ -125,8 +126,12 @@ class PublicApi:
 
         """
         headers = {"X-Api-Key": self.config.api_key, "Content-Type": "application/json"}
-        requests.post(
-            f"{self.config.auto_api_base_url}v2/test-case-results/{test_case_id}/submit",
-            json=info,
-            headers=headers,
-        )
+        try:
+            response = requests.post(
+                f"{self.config.auto_api_base_url}v2/test-case-results/{test_case_id}/submit",
+                json=info,
+                headers=headers,
+            )
+            response.raise_for_status()
+        except requests.RequestException as e:
+            raise ApplauseClientError(response) from e
