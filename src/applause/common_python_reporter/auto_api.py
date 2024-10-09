@@ -305,7 +305,7 @@ class AutoApi:
                 headers=headers,
                 files={"file": (asset_name, file, "application/octet-stream")},
                 data={
-                    "providerSessionGuid": provider_session_guid,
+                    "sessionId": provider_session_guid,
                     "assetType": asset_type.value,
                     "assetName": asset_name,
                 },
